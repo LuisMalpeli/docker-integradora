@@ -1,0 +1,30 @@
+name: todo-list
+services:
+    docker-integradora:
+        image: docker-integradora:v2
+        ports:
+            - 8080:3000
+        volumes:
+            - data:/etc/todos/todo.db
+        networks:
+            - red-integradora
+        depends_on: 
+            - mysql
+    mysql:
+        container_name: mysql
+        volumes:
+            - data:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=my-secret-pw
+            - MYSQL_DATABASE=todos
+        networks:
+            - red-integradora
+        image: mysql:8.0
+networks:
+    red-integradora:
+        external: true
+        name: red-integradora
+volumes:
+    data:
+        external: true
+        name: data
