@@ -125,6 +125,8 @@ Los datos en esta APP se guardan en un archivo `/etc/todos/todo.db`.
 
 - Decida que tipo de persistencia es la adecuada para la app.
 
+Utilizo el volumen para que docker se encarga de la gestion de los datos y se pueden crear al momento de crear un contenedor.
+
 Utilizo volumenes 
 
 > [!TIP]
@@ -162,7 +164,39 @@ Utilizo volumenes
 En la carpeta raíz del proyecto, cree un archivo de docker compose `compose.yml` o `docker-compose.yml`. Adicionalmente pégue el contenido del archivo `compose` en este lugar:
 
 ```compose
-# Copie aquí el contenido del archivo compose.
+# name: todo-list
+services:
+    docker-integradora:
+        image: malpeliluis/docker-integradora
+        ports:
+            - 8080:3000
+        networks:
+            - red-integradora
+        environment:
+            - MYSQL_HOST=mysql
+            - MYSQL_USER=root
+            - MYSQL_PASSWORD=my-secret-pw
+            - MYSQL_DB=todos
+        depends_on: 
+            - mysql
+        restart: always
+    mysql:
+        container_name: mysql
+        volumes:
+            - data:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_USER=root
+            - MYSQL_ROOT_PASSWORD=my-secret-pw
+            - MYSQL_DATABASE=todos
+        networks:
+            - red-integradora
+        image: mysql:8.0
+networks:
+    red-integradora:
+        name: red-integradora
+volumes:
+    data:
+        name: data
 ```
 
 > [!IMPORTANT]  
