@@ -164,33 +164,32 @@ Utilizo volumenes
 En la carpeta raíz del proyecto, cree un archivo de docker compose `compose.yml` o `docker-compose.yml`. Adicionalmente pégue el contenido del archivo `compose` en este lugar:
 
 ```compose
-# name: todo-list
+# 
+name: todo-list
 services:
+    mysql:
+        container_name: mysql
+        image: mysql:8.0
+        volumes:
+            - data:/var/lib/mysql
+        environment:
+            MYSQL_USER: integradora
+            MYSQL_PASSWORD: integradora
+            MYSQL_ROOT_PASSWORD: integradora
+            MYSQL_DATABASE: todos
+
     docker-integradora:
         image: malpeliluis/docker-integradora
         ports:
             - 8080:3000
-        networks:
-            - red-integradora
         environment:
-            - MYSQL_HOST=mysql
-            - MYSQL_USER=root
-            - MYSQL_PASSWORD=my-secret-pw
-            - MYSQL_DB=todos
+            MYSQL_HOST: mysql
+            MYSQL_USER: integradora
+            MYSQL_PASSWORD: integradora
+            MYSQL_DB: todos
         depends_on: 
-            - mysql
+           - mysql
         restart: always
-    mysql:
-        container_name: mysql
-        volumes:
-            - data:/var/lib/mysql
-        environment:
-            - MYSQL_ROOT_USER=root
-            - MYSQL_ROOT_PASSWORD=my-secret-pw
-            - MYSQL_DATABASE=todos
-        networks:
-            - red-integradora
-        image: mysql:8.0
 networks:
     red-integradora:
         name: red-integradora
